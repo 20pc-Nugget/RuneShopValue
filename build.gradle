@@ -26,7 +26,7 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 }
-
+test { jvmArgs '-ea' }
 group = 'com.example'
 
 tasks.withType(JavaCompile).configureEach {
