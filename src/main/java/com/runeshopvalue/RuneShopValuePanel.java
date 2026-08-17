@@ -6,12 +6,14 @@ import net.runelite.client.ui.PluginPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Map;
 
 public class RuneShopValuePanel extends PluginPanel
 {
     private final JPanel listPanel = new JPanel();
-    private final JLabel totalLabel = new JLabel("Total: 0 gp");
+    private final JLabel totalCoinLabel = new JLabel();
+    private final JLabel totalTextLabel = new JLabel("Total: 0 gp");
     private final ItemManager itemManager;
 
     public RuneShopValuePanel(ItemManager itemManager)
@@ -21,8 +23,12 @@ public class RuneShopValuePanel extends PluginPanel
         setLayout(new BorderLayout());
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
         add(new JScrollPane(listPanel), BorderLayout.CENTER);
-        totalLabel.setFont(totalLabel.getFont().deriveFont(Font.BOLD));
-        add(totalLabel, BorderLayout.SOUTH);
+
+        JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 4));
+        totalTextLabel.setFont(totalTextLabel.getFont().deriveFont(Font.BOLD));
+        totalPanel.add(totalCoinLabel);
+        totalPanel.add(totalTextLabel);
+        add(totalPanel, BorderLayout.SOUTH);
     }
 
     public void update(Map<Integer, Integer> runeCounts)
@@ -41,7 +47,11 @@ public class RuneShopValuePanel extends PluginPanel
             listPanel.add(buildRow(itemId, quantity, value));
         }
 
-        totalLabel.setText("Total: " + String.format("%,d", total) + " gp");
+        int totalCoins = (int) Math.min(total, Integer.MAX_VALUE);
+        BufferedImage coinImg = itemManager.getImage(ItemID.COINS_995, totalCoins, true);
+        totalCoinLabel.setIcon(new ImageIcon(coinImg));
+        totalTextLabel.setText("Total: " + String.format("%,d gp", total));
+
         listPanel.revalidate();
         listPanel.repaint();
         revalidate();
@@ -50,18 +60,15 @@ public class RuneShopValuePanel extends PluginPanel
 
     private JPanel buildRow(int itemId, int quantity, long value)
     {
-        JPanel row = new JPanel();
-        row.setLayout(new FlowLayout(FlowLayout.LEFT, 6, 4));
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 4));
 
-        JLabel runeLabel = new JLabel();
-        net.runelite.client.util.AsyncBufferedImage runeIcon = itemManager.getImage(itemId, quantity, true);
-        runeIcon.addTo(runeLabel);
+        BufferedImage runeImg = itemManager.getImage(itemId, quantity, true);
+        JLabel runeLabel = new JLabel(new ImageIcon(runeImg));
         row.add(runeLabel);
 
-        JLabel coinLabel = new JLabel();
         int coinQuantity = (int) Math.min(value, Integer.MAX_VALUE);
-        net.runelite.client.util.AsyncBufferedImage coinIcon = itemManager.getImage(ItemID.COINS, coinQuantity, true);
-        coinIcon.addTo(coinLabel);
+        BufferedImage coinImg = itemManager.getImage(ItemID.COINS_995, coinQuantity, true);
+        JLabel coinLabel = new JLabel(new ImageIcon(coinImg));
         row.add(coinLabel);
 
         JLabel valueLabel = new JLabel(String.format("%,d gp", value));

@@ -15,6 +15,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.ui.overlay.OverlayManager;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -38,6 +39,12 @@ public class RuneShopValuePlugin extends Plugin
 
     @Inject
     private ItemManager itemManager;
+
+    @Inject
+    private OverlayManager overlayManager;
+
+    @Inject
+    private RuneShopValueOverlay overlay;
 
     private RuneShopValuePanel panel;
     private NavigationButton navButton;
@@ -63,12 +70,14 @@ public class RuneShopValuePlugin extends Plugin
                 .build();
 
         clientToolbar.addNavigation(navButton);
+        overlayManager.add(overlay);
     }
 
     @Override
     protected void shutDown()
     {
         clientToolbar.removeNavigation(navButton);
+        overlayManager.remove(overlay);
     }
 
     @Subscribe
@@ -94,5 +103,6 @@ public class RuneShopValuePlugin extends Plugin
         }
 
         panel.update(runeCounts);
+        overlay.updateRuneCounts(runeCounts);
     }
 }

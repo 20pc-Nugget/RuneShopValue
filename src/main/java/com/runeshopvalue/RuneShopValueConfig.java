@@ -16,4 +16,14 @@ public interface RuneShopValueConfig extends Config
     {
         return true;
     }
+
+    @ConfigItem(
+            keyName = "showOverlay",
+            name = "Show in-game overlay",
+            description = "Display rune values as an in-game overlay"
+    )
+    default boolean showOverlay()
+    {
+        return false;
+    }
 }
