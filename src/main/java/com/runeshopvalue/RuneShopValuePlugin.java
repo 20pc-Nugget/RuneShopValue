@@ -46,6 +46,9 @@ public class RuneShopValuePlugin extends Plugin
     @Inject
     private RuneShopValueOverlay overlay;
 
+    @Inject
+    private RuneShopInventoryTooltipOverlay inventoryTooltipOverlay;
+
     private RuneShopValuePanel panel;
     private NavigationButton navButton;
 
@@ -71,6 +74,7 @@ public class RuneShopValuePlugin extends Plugin
 
         clientToolbar.addNavigation(navButton);
         overlayManager.add(overlay);
+        overlayManager.add(inventoryTooltipOverlay);
     }
 
     @Override
@@ -78,6 +82,7 @@ public class RuneShopValuePlugin extends Plugin
     {
         clientToolbar.removeNavigation(navButton);
         overlayManager.remove(overlay);
+        overlayManager.remove(inventoryTooltipOverlay);
     }
 
     @Subscribe
@@ -90,7 +95,7 @@ public class RuneShopValuePlugin extends Plugin
         {
             for (Item item : inventory.getItems())
             {
-                if (RunePrices.PRICES.containsKey(item.getId()))
+                if (RunePrices.PRICES.containsKey(item.getId()) && isEnabled(item.getId()))
                 {
                     runeCounts.merge(item.getId(), item.getQuantity(), Integer::sum);
                 }
@@ -100,9 +105,28 @@ public class RuneShopValuePlugin extends Plugin
         if (config.includeRunePouch())
         {
             RunePouchReader.addPouchContents(client, runeCounts);
+            runeCounts.keySet().removeIf(id -> !isEnabled(id));
         }
 
         panel.update(runeCounts);
         overlay.updateRuneCounts(runeCounts);
+    }
+
+    private boolean isEnabled(int itemId)
+    {
+        if (itemId == ItemID.AIR_RUNE) return config.showAir();
+        if (itemId == ItemID.WATER_RUNE) return config.showWater();
+        if (itemId == ItemID.EARTH_RUNE) return config.showEarth();
+        if (itemId == ItemID.FIRE_RUNE) return config.showFire();
+        if (itemId == ItemID.MIND_RUNE) return config.showMind();
+        if (itemId == ItemID.BODY_RUNE) return config.showBody();
+        if (itemId == ItemID.COSMIC_RUNE) return config.showCosmic();
+        if (itemId == ItemID.CHAOS_RUNE) return config.showChaos();
+        if (itemId == ItemID.NATURE_RUNE) return config.showNature();
+        if (itemId == ItemID.LAW_RUNE) return config.showLaw();
+        if (itemId == ItemID.DEATH_RUNE) return config.showDeath();
+        if (itemId == ItemID.BLOOD_RUNE) return config.showBlood();
+        if (itemId == ItemID.SOUL_RUNE) return config.showSoul();
+        return true;
     }
 }
