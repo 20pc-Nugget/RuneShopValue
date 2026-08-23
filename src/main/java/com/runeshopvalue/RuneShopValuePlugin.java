@@ -3,11 +3,11 @@ package com.runeshopvalue;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import net.runelite.api.Client;
-import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.gameval.InventoryID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
@@ -16,8 +16,8 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.AsyncBufferedImage;
 
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,7 +63,7 @@ public class RuneShopValuePlugin extends Plugin
     {
         panel = new RuneShopValuePanel(itemManager);
 
-        BufferedImage icon = itemManager.getImage(ItemID.LAW_RUNE);
+        AsyncBufferedImage icon = itemManager.getImage(ItemID.LAW_RUNE);
 
         navButton = NavigationButton.builder()
                 .tooltip("Rune Shop Value")
@@ -73,6 +73,15 @@ public class RuneShopValuePlugin extends Plugin
                 .build();
 
         clientToolbar.addNavigation(navButton);
+
+        // The sprite often isn't loaded yet at this point (you're not logged in yet),
+        // so force the sidebar to redraw this icon once it actually finishes loading.
+        icon.onLoaded(() ->
+        {
+            clientToolbar.removeNavigation(navButton);
+            clientToolbar.addNavigation(navButton);
+        });
+
         overlayManager.add(overlay);
         overlayManager.add(inventoryTooltipOverlay);
     }
@@ -90,7 +99,7 @@ public class RuneShopValuePlugin extends Plugin
     {
         Map<Integer, Integer> runeCounts = new HashMap<>();
 
-        ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
+        ItemContainer inventory = client.getItemContainer(InventoryID.INV);
         if (inventory != null)
         {
             for (Item item : inventory.getItems())

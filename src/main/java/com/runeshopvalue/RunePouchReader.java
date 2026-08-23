@@ -3,8 +3,8 @@ package com.runeshopvalue;
 import net.runelite.api.Client;
 import net.runelite.api.EnumComposition;
 import net.runelite.api.EnumID;
-import net.runelite.api.InventoryID;
 import net.runelite.api.ItemID;
+import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.VarbitID;
 
 import java.util.Map;
@@ -32,7 +32,7 @@ public class RunePouchReader
 
     public static void addPouchContents(Client client, Map<Integer, Integer> runeCounts)
     {
-        var inventory = client.getItemContainer(InventoryID.INVENTORY);
+        var inventory = client.getItemContainer(InventoryID.INV);
         if (inventory == null)
         {
             return;
