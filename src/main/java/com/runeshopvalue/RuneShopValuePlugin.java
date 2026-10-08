@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @PluginDescriptor(
-        name = "Rune Shop Value",
+        name = "Ali's Rune Shop Values",
         description = "Shows the sell value of your runes at Ali Morrisane's shop",
         tags = {"runes", "value", "ali morrisane", "shop"}
 )
