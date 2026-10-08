@@ -14,21 +14,20 @@ repositories {
 }
 
 def runeLiteVersion = 'latest.release'
-def pluginMainClass = 'com.lootingbagplus.LootingBagPlusPluginTest'
+def pluginMainClass = 'com.example.ExamplePluginTest'
 
 dependencies {
-	compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
+	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
 
 	compileOnly 'org.projectlombok:lombok:1.18.30'
 	annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
 	testImplementation 'junit:junit:4.12'
-	testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
-	testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
+	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
+	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 }
-
-group = 'com.lootingbagplus'
-version = '1.0-SNAPSHOT'
+test { jvmArgs '-ea' }
+group = 'com.example'
 
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8'
